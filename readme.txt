@@ -17,6 +17,8 @@ depending on the ordered quantity and on the specific product.
 
 WooCommerce Bulk Discount is compatible with WooCommerce 2.0.x to 2.3.x.
 
+**Important compatibility notice: WooCommerce Bulk Discount is no longer actively developed neither does support WooCommerce 2.4+.**
+
 Let us examine some examples of usage.
 
 *   You may want to feature the following discount policy in your store: if the customer
@@ -59,12 +61,6 @@ WooCommerce Bulk Discount has been localised to these languages:
 *   Portuguese (translated by João)
 *   Polish (translated by Michał)
 *   Czech
-
-**If you like WooCommerce Bulk Discount, please also check out these plugins:**
-
-*   <a href="http://codecanyon.net/item/woocommerce-free-gift/6144902?ref=renp">WooCommerce Free Gift</a>
-*   <a href="http://codecanyon.net/item/woocommerce-gift-coupons/6207561?ref=renp">WooCommerce Gift Coupons</a>
-*   <a href="http://codecanyon.net/item/woocommerce-out-of-stock-warning/11038795">WooCommerce Out of Stock Warning</a>
 
 == Installation ==
 
