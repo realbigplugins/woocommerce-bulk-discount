@@ -60,6 +60,11 @@ WooCommerce Bulk Discount has been localised to these languages:
 *   Polish (translated by Michał)
 *   Czech
 
+**If you like WooCommerce Bulk Discount, please also check out these premium plugins:**
+
+*   <a href="http://codecanyon.net/item/woocommerce-free-gift/6144902?ref=renp">WooCommerce Free Gift</a>
+*   <a href="http://codecanyon.net/item/woocommerce-gift-coupons/6207561?ref=renp">WooCommerce Gift Coupons</a>
+
 == Installation ==
 
 1. Download the latest version and extract it in the /wp-content/plugins/ directory
