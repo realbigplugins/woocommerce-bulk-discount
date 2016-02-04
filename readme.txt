@@ -2,20 +2,20 @@
 Contributors: Rene Puchinger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6VEQ8XXK6B3UE
 Tags: woocommerce, bulk, discount
-Requires at least: 3.5
-Tested up to: 4.1.1
-Stable tag: 2.3.1
+Requires at least: 3.6
+Tested up to: 4.4.2
+Stable tag: 2.3.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Apply fine-grained bulk discounts to items in the shopping cart with this WooCommerce extension.
+Apply fine-grained bulk discounts to items in the shopping cart.
 
 == Description ==
 
 WooCommerce Bulk Discount makes it possible to apply fine-grained bulk discounts to items in the shopping cart,
 depending on the ordered quantity and on the specific product.
 
-WooCommerce Bulk Discount is compatible with WooCommerce 2.0.x to 2.3.x.
+**WooCommerce Bulk Discount is compatible with WooCommerce 2.0.x to 2.5.x.**
 
 Let us examine some examples of usage.
 
@@ -48,7 +48,7 @@ Here is the list of the main features:
 *   Bulk discount can or cannot be applied if a coupon code is used, depending on configuration.
 *   HTML markup is allowed in information about the bulk discount offer in Product Description.
 *   Bulk Discount can be disabled more easily in the Product Options page.
-*   Compatibility with WooCommerce 2.0.x, 2.1.x, 2.2.x.
+*   Compatibility with WooCommerce 2.0.x to 2.3.x.
 
 WooCommerce Bulk Discount has been localised to these languages:
 
@@ -60,7 +60,7 @@ WooCommerce Bulk Discount has been localised to these languages:
 *   Polish (translated by Michał)
 *   Czech
 
-**If you like WooCommerce Bulk Discount, please also check out these plugins:**
+**If you like WooCommerce Bulk Discount, please also check out these premium plugins:**
 
 *   <a href="http://codecanyon.net/item/woocommerce-free-gift/6144902?ref=renp">WooCommerce Free Gift</a>
 *   <a href="http://codecanyon.net/item/woocommerce-gift-coupons/6207561?ref=renp">WooCommerce Gift Coupons</a>
@@ -145,6 +145,9 @@ Setting bulk discounts couldn't have been easier.
 6. Example of percentage bulk discount visibility on the cart page.
 
 == Changelog ==
+
+= 2.3.2 =
+* (4 Feb 2016) Bugfix - the discount was not applied when the user created an account during checkout.
 
 = 2.3.1 =
 * (28 Sep 2014) Bugfix - settings tab was not working in WooCommerce 2.0.x
@@ -259,6 +262,9 @@ Setting bulk discounts couldn't have been easier.
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.3.2 =
+Bugfix release.
 
 = 2.3.1 =
 Bugfix release.
