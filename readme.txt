@@ -3,8 +3,8 @@ Contributors: Rene Puchinger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6VEQ8XXK6B3UE
 Tags: woocommerce, bulk, discount
 Requires at least: 3.6
-Tested up to: 4.4.1
-Stable tag: 2.3.1
+Tested up to: 4.4.2
+Stable tag: 2.3.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,6 +146,9 @@ Setting bulk discounts couldn't have been easier.
 
 == Changelog ==
 
+= 2.3.2 =
+* (4 Feb 2016) Bugfix - the discount was not applied when the user created an account during checkout.
+
 = 2.3.1 =
 * (28 Sep 2014) Bugfix - settings tab was not working in WooCommerce 2.0.x
 
@@ -259,6 +262,9 @@ Setting bulk discounts couldn't have been easier.
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.3.2 =
+Bugfix release.
 
 = 2.3.1 =
 Bugfix release.
