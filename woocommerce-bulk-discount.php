@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Bulk Discount
 Plugin URI: http://wordpress.org/plugins/woocommerce-bulk-discount/
 Description: Apply fine-grained bulk discounts to items in the shopping cart.
 Author: Rene Puchinger
-Version: 2.3.1
+Version: 2.4.0
 Author URI: https://profiles.wordpress.org/rene-puchinger/
 License: GPL3
 
@@ -67,7 +67,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		}
 
 		/**
-         * Main processing hooks
+		 * Main processing hooks
 		 */
 		public function woocommerce_loaded() {
 
@@ -104,13 +104,13 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 * @return array
 		 */
 		public function action_links( $links ) {
-		
+
 			$settings_slug = 'woocommerce';
-		
+
 			if ( version_compare( WOOCOMMERCE_VERSION, "2.1.0" ) >= 0 ) {
-				
-				$settings_slug = 'wc-settings';			
-				
+
+				$settings_slug = 'wc-settings';
+
 			}
 
 			$plugin_links = array(
@@ -132,6 +132,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 
 			$q = array( 0.0 );
 			$d = array( 0.0 );
+
+			$configurer = get_page_by_title( 'wc_bulk_discount_configurer', OBJECT, 'product' );
+			if ( $configurer && $configurer->ID && $configurer->post_status == 'private' ) {
+				$product_id = $configurer->ID;
+			}
 
 			/* Find the appropriate discount coefficient by looping through up to the five discount settings */
 			for ( $i = 1; $i <= 5; $i++ ) {
@@ -347,7 +352,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return;
 			}
 
-			if ($this->bulk_discount_calculated) {
+			if ( $this->bulk_discount_calculated ) {
 				return;
 			}
 
@@ -379,7 +384,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 
 			global $woocommerce;
 
-			if ($this->bulk_discount_calculated) {
+			if ( $this->bulk_discount_calculated ) {
 				return $res;
 			}
 
@@ -440,6 +445,10 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return;
 			}
 
+			if ( !$this->bulk_discount_calculated ) {
+				return;
+			}
+
 			if ( sizeof( $cart->cart_contents ) > 0 ) {
 				foreach ( $cart->cart_contents as $cart_item_key => $values ) {
 					$_product = $values['data'];
@@ -448,6 +457,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 					}
 					$values['data']->set_price( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] );
 				}
+				$this->bulk_discount_calculated = false;
 			}
 
 		}
@@ -534,7 +544,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				$style = 'style = "padding: 10px !important"';
 			}
 
-			echo '<li class="bulkdiscount_tab bulkdiscount_options"><a href="#bulkdiscount_product_data" '.$style.'>' . __( 'Bulk Discount', 'wc_bulk_discount' ) . '</a></li>';
+			echo '<li class="bulkdiscount_tab bulkdiscount_options"><a href="#bulkdiscount_product_data" ' . $style . '>' . __( 'Bulk Discount', 'wc_bulk_discount' ) . '</a></li>';
 
 		}
 
@@ -731,13 +741,13 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 * @return void
 		 */
 		public function add_tab() {
-		
+
 			$settings_slug = 'woocommerce';
-		
+
 			if ( version_compare( WOOCOMMERCE_VERSION, "2.1.0" ) >= 0 ) {
-				
-				$settings_slug = 'wc-settings';			
-				
+
+				$settings_slug = 'wc-settings';
+
 			}
 
 			foreach ( $this->settings_tabs as $name => $label ) {
@@ -961,7 +971,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		}
 
 		/**
-         * @return bool
+		 * @return bool
 		 */
 		protected function coupon_check() {
 
