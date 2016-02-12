@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_butt
 Tags: woocommerce, bulk, discount
 Requires at least: 3.6
 Tested up to: 4.4.2
-Stable tag: 2.3.2
+Stable tag: 2.4.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,18 +37,19 @@ policies to be adopted in your store.
 
 Here is the list of the main features:
 
-*   Possibility of setting percentage bulk discount or flat (fixed) bulk discount in currency units.
+*   Possibility to set percentage bulk discount or flat (fixed) bulk discount in currency units.
+*   Possibility to set the discount individually per product.
+*   Possibility to set the discount globally for all products. **NEW - see the documentation**
 *   Bulk discounts for product variations is supported to treat them separately or by shared quantity when discounting. 
 *   Discount is better visible and is available on several locations (see below).
-*   Discount is visible on the Checkout page
-*   Discount is visible on the Order Details page
+*   Discount is visible on the Checkout page.
+*   Discount is visible on the Order Details page.
 *   Discount is visible in WooCommerce order e-mails and invoices as well.
 *   Showing the applied discount when hovering over the item price in the cart.   
 *   Possibility of easily changing the CSS of the price before and after discount.
 *   Bulk discount can or cannot be applied if a coupon code is used, depending on configuration.
 *   HTML markup is allowed in information about the bulk discount offer in Product Description.
 *   Bulk Discount can be disabled more easily in the Product Options page.
-*   Compatibility with WooCommerce 2.0.x to 2.3.x.
 
 WooCommerce Bulk Discount has been localised to these languages:
 
@@ -82,9 +83,12 @@ may choose to use a flat discount applied to the cart item subtotal. Optionally 
 modify the CSS styles for the old value and the new value which is displayed in the cart.
 Save the settings.
 
-2. Navigate to Products and choose a product for which you want to create a discount policy.
+2. If you want to set the discount individually per product then navigate to Products and choose a product for which you want to create a discount policy.
 In the Product Data panel, click Bulk Discount and optionally fill information about the discount
 which will be visible in the product description.
+
+If you want to set the discount policy globally for all products, just create a private product with the title 'wc_bulk_discount_configurer' (without quotes).
+In the bulk discount section of this private product set the discount as in the case of any individual product (see step 3).
 
 3. Click "Add discount line" button to create a policy. Quantity (min.) means minimal
 number of ordered items so that the (second textbox) Discount applies. It is possible to
@@ -135,6 +139,11 @@ line will apply and the customer will pay (15 * 10) - 10 dollars. If the custome
 50 items, the second discount line will apply and the final price will be (50 * 10) - 20 dollars.
 Setting bulk discounts couldn't have been easier.
 
+= How do I set the discount globally for all products? =
+This feature has been added to version 2.4.0 of WooCommerce Bulk Discount. If you want to set the discount policy globally for all products,
+just create a private product with the title 'wc_bulk_discount_configurer' (without quotes). See <a href="https://codex.wordpress.org/Content_Visibility">https://codex.wordpress.org/Content_Visibility</a> how to make a post (and also product) private.
+In the bulk discount section of this private product set the discount as in the case of any individual product. This discount configuration will override all individual discounts set on products (if they have been set).
+
 == Screenshots ==
 
 1. Bulk Discount Settings page.
@@ -145,6 +154,9 @@ Setting bulk discounts couldn't have been easier.
 6. Example of percentage bulk discount visibility on the cart page.
 
 == Changelog ==
+
+= 2.4.0 =
+* (12 Feb 2016) new feature - it is now possible to set the discount globally for all products.
 
 = 2.3.2 =
 * (4 Feb 2016) Bugfix - the discount was not applied when the user created an account during checkout.
@@ -262,6 +274,9 @@ Setting bulk discounts couldn't have been easier.
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.4.0 =
+New feature release.
 
 = 2.3.2 =
 Bugfix release.
