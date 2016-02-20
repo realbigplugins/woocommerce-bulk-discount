@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_butt
 Tags: woocommerce, bulk, discount
 Requires at least: 3.6
 Tested up to: 4.4.2
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -155,6 +155,9 @@ In the bulk discount section of this private product set the discount as in the 
 
 == Changelog ==
 
+= 2.4.1. =
+* (20 Feb 2016) Removed unnecessary setting field for enabling/disabling the plugin core functionality.
+
 = 2.4.0 =
 * (12 Feb 2016) new feature - it is now possible to set the discount globally for all products.
 
@@ -274,6 +277,9 @@ In the bulk discount section of this private product set the discount as in the 
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.4.1. =
+Maintenance release.
 
 = 2.4.0 =
 New feature release.
