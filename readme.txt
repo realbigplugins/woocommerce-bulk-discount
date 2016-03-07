@@ -66,6 +66,9 @@ WooCommerce Bulk Discount has been localised to these languages:
 *   <a href="http://codecanyon.net/item/woocommerce-free-gift/6144902?ref=renp">WooCommerce Free Gift</a>
 *   <a href="http://codecanyon.net/item/woocommerce-gift-coupons/6207561?ref=renp">WooCommerce Gift Coupons</a>
 
+**Recommended WordPress theme. There is everything you need:**
+*   <a href="http://themeforest.net/item/x-the-theme/5871901?ref=renp">Theme X</a>
+
 == Installation ==
 
 1. Download the latest version and extract it in the /wp-content/plugins/ directory
