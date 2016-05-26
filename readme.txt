@@ -3,8 +3,8 @@ Contributors: Rene Puchinger
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6VEQ8XXK6B3UE
 Tags: woocommerce, bulk, discount
 Requires at least: 3.6
-Tested up to: 4.4.2
-Stable tag: 2.4.1
+Tested up to: 4.5.2
+Stable tag: 2.4.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,7 +15,7 @@ Apply fine-grained bulk discounts to items in the shopping cart.
 WooCommerce Bulk Discount makes it possible to apply fine-grained bulk discounts to items in the shopping cart,
 depending on the ordered quantity and on the specific product.
 
-**WooCommerce Bulk Discount is compatible with WooCommerce 2.0.x to 2.5.x.**
+**WooCommerce Bulk Discount is compatible with WooCommerce 2.0.x to 2.6.x.**
 
 Let us examine some examples of usage.
 
@@ -27,8 +27,8 @@ line lowered by 10%.
 orders more than 10 items of a product and a 10% discount if he/she orders more than
 20 items.
 
-*   Bulk Discounts supports flat discounts in currency units as well,
-enabling you to handle scenarios like deducting fixed value of, say $10 from the item subtotal.
+*   Bulk Discounts supports fixed and flat discounts in currency units as well,
+enabling you to handle scenarios like deducting a specific value of, say $10 from the item subtotal.
 For example, when the customer orders more than 10 items (say, 15, 20, etc.), a discount of $10
 will be applied only on the subtotal price.
 
@@ -37,9 +37,9 @@ policies to be adopted in your store.
 
 Here is the list of the main features:
 
-*   Possibility to set percentage bulk discount or flat (fixed) bulk discount in currency units.
+*   Possibility to set percentage, fixed or flat bulk discount in currency units. (see FAQ section for details)
 *   Possibility to set the discount individually per product.
-*   Possibility to set the discount globally for all products. **NEW - see the documentation**
+*   Possibility to set the discount globally for all products.
 *   Bulk discounts for product variations is supported to treat them separately or by shared quantity when discounting. 
 *   Discount is better visible and is available on several locations (see below).
 *   Discount is visible on the Checkout page.
@@ -54,21 +54,15 @@ Here is the list of the main features:
 WooCommerce Bulk Discount has been localised to these languages:
 
 *   English
-*   German (translated by Andy Soiron)
-*   Spanish (translated by Gendrith Albornoz)
-*   Swedish (translated by Mr3K)
-*   Portuguese (translated by João)
-*   Polish (translated by Michał)
 *   Czech
+
+Note: Due to important changes in the localization files (mainly with regards to the fixed / flat discount differences) I decided to drop
+the other localizations. If you use any localization other than above make sure to check and edit your localization files.
 
 **If you like WooCommerce Bulk Discount, please also check out these premium plugins:**
 
 *   <a href="http://codecanyon.net/item/woocommerce-free-gift/6144902?ref=renp">WooCommerce Free Gift</a>
 *   <a href="http://codecanyon.net/item/woocommerce-gift-coupons/6207561?ref=renp">WooCommerce Gift Coupons</a>
-
-**Recommended WordPress theme. There is everything you need:**
-
-*   <a href="http://themeforest.net/item/x-the-theme/5871901?ref=renp">Theme X</a>
 
 == Installation ==
 
@@ -87,12 +81,11 @@ may choose to use a flat discount applied to the cart item subtotal. Optionally 
 modify the CSS styles for the old value and the new value which is displayed in the cart.
 Save the settings.
 
-2. If you want to set the discount individually per product then navigate to Products and choose a product for which you want to create a discount policy.
-In the Product Data panel, click Bulk Discount and optionally fill information about the discount
-which will be visible in the product description.
-
-If you want to set the discount policy globally for all products, just create a private product with the title 'wc_bulk_discount_configurer' (without quotes).
-In the bulk discount section of this private product set the discount as in the case of any individual product (see step 3).
+2. If you want to set the discount individually per product then navigate to Products and choose a product for which you want
+to create a discount policy. In the Product Data panel, click Bulk Discount and optionally fill information about the discount
+which will be visible in the product description. If you want to set the discount policy globally for all products, just create
+a private product with the title 'wc_bulk_discount_configurer' (without quotes). In the bulk discount section of this private
+product set the discount as in the case of any individual product (see step 3).
 
 3. Click "Add discount line" button to create a policy. Quantity (min.) means minimal
 number of ordered items so that the (second textbox) Discount applies. It is possible to
@@ -106,8 +99,9 @@ Yes, multiple discounts (related to a single product) are supported. Currently i
 set up to 5 discount lines. That should be enough for reasonable fine-tuning of the discount.
 
 = Is only a percentage discount implemented? =
-Since version 2.0 another type of discount is added, allowing you to set a fixed discount in currency units
-for the cart item subtotal.
+Since version 2.0 another type of discount is added, allowing you to set a flat discount in currency units
+for the cart item subtotal. Since version 2.4.2 you can add a fixed discount type which is a bit different than
+the flat discount type - see below for examples.
 
 = Will the discount be visible on WooCommerce e-mails and Order status as well? =
 Yes. Since version 2.0, this feature has been implemented.
@@ -141,7 +135,19 @@ Example for flat discount follows:
 If the customer orders, say, 15 items of the product which costs $10 per item, the first discount
 line will apply and the customer will pay (15 * 10) - 10 dollars. If the customers orders
 50 items, the second discount line will apply and the final price will be (50 * 10) - 20 dollars.
-Setting bulk discounts couldn't have been easier.
+
+
+= Can you provide an example of setting a fixed bulk discount? =
+Example for fixed discount follows:
+
+1. Quantity (min.) = 10, Discount ($) = 2
+2. Quantity (min.) = 30, Discount ($) = 3
+
+If the customer orders, say, 15 items of the product which costs $10 per item, the first discount
+line will apply and the customer will pay (15 * 10) - (15 * 2) = 15 * (10 - 2) dollars. If the customers orders
+50 items, the second discount line will apply and the final price will be (50 * 10) - (50 * 3) =  50 * (10 - 3) dollars.
+**Note the difference between fixed and flat discount types!!! Flat discount is a discount from the line subtotal while fixed discount is applied on each individual quantity.**
+
 
 = How do I set the discount globally for all products? =
 This feature has been added to version 2.4.0 of WooCommerce Bulk Discount. If you want to set the discount policy globally for all products,
@@ -159,7 +165,12 @@ In the bulk discount section of this private product set the discount as in the 
 
 == Changelog ==
 
-= 2.4.1. =
+= 2.4.2 =
+* (25 May 2016) Testing the plugin with WooCommerce 2.6.
+* Added another type of discount - check carefully the FAQ section to learn the differences between the supported discount types: percentage, flat and fixed.
+* Fixed the issue of showing wrong discount when AJAX cart is enabled.
+
+= 2.4.1 =
 * (20 Feb 2016) Removed unnecessary setting field for enabling/disabling the plugin core functionality.
 
 = 2.4.0 =
@@ -245,7 +256,7 @@ In the bulk discount section of this private product set the discount as in the 
 * (3 Sep 2013) Added a warning for changing discount type on a site with existing orders (currently it is safe to change discount type only for the first time after installing the plugin or on fresh WooCommerce installation with no orders).
 
 = 2.0 =
-* (3 Sep 2013) Possibility of setting a flat (fixed) discount in currency units.
+* (3 Sep 2013) Possibility of setting a flat discount in currency units.
 * Discount is better visible and is available on more lcoations (see below).
 * Discount is visible on the Checkout page
 * Discount is visible on the Order Details page
@@ -281,6 +292,9 @@ In the bulk discount section of this private product set the discount as in the 
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.4.2 =
+New features release.
 
 = 2.4.1. =
 Maintenance release.
@@ -345,12 +359,6 @@ Minor maintenance release.
 = 2.0.5 =
 Bugfix release. Please update immediately.
 
-= 2.0.4 =
-*unstable*
-
-= 2.0.3 =
-*unstable*
-
 = 2.0.2 =
 Important maintenance release. Please update immediately.
 
@@ -374,9 +382,6 @@ Maintenance release.
 
 = 1.1 =
 Important bugfix release. Upgrading recommended as soon as possible.
-
-= 1.0.1 =
-*unstable*
 
 = 1.0 =
 Initial version.
