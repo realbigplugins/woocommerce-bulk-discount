@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_butt
 Tags: woocommerce, bulk, discount
 Requires at least: 3.6
 Tested up to: 4.7.2
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -165,8 +165,11 @@ In the bulk discount section of this private product set the discount as in the 
 
 == Changelog ==
 
+= 2.4.4 =
+* (20 Feb 2017) Making the plugin compatible with WooCommerce 2.7 (tested with 2.7 Beta 3).
+
 = 2.4.3 =
-* (17 Feb 2017) Making the plugin compatible with WooCommerce 2.7.
+* (17 Feb 2017) Making the plugin compatible with WooCommerce 2.7 (tested with 2.7 Beta 2).
 
 = 2.4.2 =
 * (25 May 2016) Testing the plugin with WooCommerce 2.6.
@@ -295,6 +298,12 @@ In the bulk discount section of this private product set the discount as in the 
 * Initial version.
 
 == Upgrade Notice ==
+
+= 2.4.4 =
+Maintenance release.
+
+= 2.4.3 =
+Maintenance release.
 
 = 2.4.2 =
 New features release.

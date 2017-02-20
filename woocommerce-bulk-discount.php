@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Bulk Discount
 Plugin URI: http://wordpress.org/plugins/woocommerce-bulk-discount/
 Description: Apply fine-grained bulk discounts to items in the shopping cart.
 Author: Rene Puchinger
-Version: 2.4.3
+Version: 2.4.4
 Author URI: https://profiles.wordpress.org/rene-puchinger/
 License: GPL3
 
@@ -199,21 +199,21 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 
 			if ( !$this->bulk_discount_calculated ) {
 				if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
-					$discprice = woocommerce_price( $_product->get_price() - $coeff );
+					$discprice = $this->get_price( $_product->get_price() - $coeff );
 				} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-					$discprice = woocommerce_price( $_product->get_price() - $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] );
+					$discprice = $this->get_price( $_product->get_price() - $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] );
 				} else {
-					$discprice = woocommerce_price( $_product->get_price() * $coeff );
+					$discprice = $this->get_price( $_product->get_price() * $coeff );
 				}
 			} else {
-				$discprice = woocommerce_price( $_product->get_price() );
+				$discprice = $this->get_price( $_product->get_price() );
 			}
 
-			$oldprice = woocommerce_price( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] );
+			$oldprice = $this->get_price( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] );
 			$old_css = esc_attr( get_option( 'woocommerce_t4m_css_old_price', 'color: #777; text-decoration: line-through; margin-right: 4px;' ) );
 			$new_css = esc_attr( get_option( 'woocommerce_t4m_css_new_price', 'color: #4AB915; font-weight: bold;' ) );
 			if ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) {
-				return "<span class='discount-info' title='" . sprintf( __( '%s bulk discount applied!', 'wc_bulk_discount' ), woocommerce_price( $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] ) ) . "'>" .
+				return "<span class='discount-info' title='" . sprintf( __( '%s bulk discount applied!', 'wc_bulk_discount' ), $this->get_price( $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] ) ) . "'>" .
 				"<span class='old-price' style='$old_css'>$oldprice</span>" .
 				"<span class='new-price' style='$new_css'>$discprice</span></span>";
 
@@ -315,7 +315,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return $price;
 			}
 
-			$_product = get_product( $values['product_id'] );
+			$_product = $this->get_product( $values['product_id'] );
 			if ( get_post_meta( $values['product_id'], "_bulkdiscount_enabled", true ) != '' && get_post_meta( $values['product_id'], "_bulkdiscount_enabled", true ) !== 'yes' ) {
 				return $price;
 			}
@@ -527,11 +527,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 
 			$coeff = $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
 			if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
-				$newsubtotal = woocommerce_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
+				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
 			} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-				$newsubtotal = woocommerce_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
+				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
 			} else {
-				$newsubtotal = woocommerce_price( $_product->get_price() * $quantity * $coeff );
+				$newsubtotal = $this->get_price( $_product->get_price() * $quantity * $coeff );
 			}
 
 			return $newsubtotal;
@@ -998,6 +998,22 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return $_product->get_id();
 			}
 			return $_product->id;
+		}
+
+		protected function get_price($price) {
+			if ( version_compare( WOOCOMMERCE_VERSION, "2.7.0" ) >= 0 ) {
+				return wc_price($price);
+			} else {
+				return woocommerce_price($price);
+			}
+		}
+
+		protected function get_product($id) {
+			if ( version_compare( WOOCOMMERCE_VERSION, "2.7.0" ) >= 0 ) {
+				return wc_get_product($id);
+			} else {
+				return get_product($id);
+			}
 		}
 
 	}
