@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Bulk Discount
 Plugin URI: http://wordpress.org/plugins/woocommerce-bulk-discount/
 Description: Apply fine-grained bulk discounts to items in the shopping cart.
 Author: Rene Puchinger
-Version: 2.4.4
+Version: 2.4.5
 Author URI: https://profiles.wordpress.org/rene-puchinger/
 License: GPL3
 
@@ -138,6 +138,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				$product_id = $configurer->ID;
 			}
 
+			$product = $this->get_product($product_id);
+			if ($product instanceof WC_Product_Variation) {
+				$product_id = $product->get_parent_id();
+			}
+			
 			/* Find the appropriate discount coefficient by looping through up to the five discount settings */
 			for ( $i = 1; $i <= 5; $i++ ) {
 				array_push( $q, get_post_meta( $product_id, "_bulkdiscount_quantity_$i", true ) );
@@ -153,7 +158,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 					$d[0] = $d[$i];
 				}
 			}
-
+			
 			// for percentage discount convert the resulting discount from % to the multiplying coefficient
 			if ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) {
 				return max( 0, $d[0] * $quantity );
@@ -279,13 +284,13 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				foreach ( $cart->cart_contents as $cart_item_key => $values ) {
 					$_product = $values['data'];
 					$quantity = 0;
-					if ( get_option( 'woocommerce_t4m_variations_separate', 'yes' ) == 'no' && $_product instanceof WC_Product_Variation && $_product->parent ) {
-						$parent = $_product->parent;
+					if ( get_option( 'woocommerce_t4m_variations_separate', 'yes' ) == 'no' && $_product instanceof WC_Product_Variation && $this->get_parent($_product) ) {
+						$parent = $this->get_parent($_product);
 						foreach ( $cart->cart_contents as $valuesInner ) {
 							$p = $valuesInner['data'];
-							if ( $p instanceof WC_Product_Variation && $p->parent && $this->get_product_id($p->parent) == $this->get_product_id($parent) ) {
+							if ( $p instanceof WC_Product_Variation && $this->get_parent($p) && $this->get_product_id($this->get_parent($p)) == $this->get_product_id($parent) ) {
 								$quantity += $valuesInner['quantity'];
-								$this->discount_coeffs[$_product->variation_id]['quantity'] = $quantity;
+								$this->discount_coeffs[$this->get_variation_id($_product)]['quantity'] = $quantity;
 							}
 						}
 					} else {
@@ -456,7 +461,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		protected function get_actual_id( $product ) {
 
 			if ( $product instanceof WC_Product_Variation ) {
-				return $product->variation_id;
+				return $this->get_variation_id($product);
 			} else {
 				return $this->get_product_id($product);
 			}
@@ -1015,7 +1020,23 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return get_product($id);
 			}
 		}
+		
+		protected function get_variation_id($_product) {
+			if ( version_compare( WOOCOMMERCE_VERSION, "2.7.0" ) >= 0 ) {
+				return $_product->get_id();
+			} else {
+				return $_product->variation_id;
+			}
+		}
 
+		protected function get_parent($_product) {
+			if ( version_compare( WOOCOMMERCE_VERSION, "2.7.0" ) >= 0 ) {
+				return $this->get_product($_product->get_parent_id());
+			} else {
+				return $_product->parent;
+			}
+		}
+		
 	}
 
 	new Woo_Bulk_Discount_Plugin_t4m();
