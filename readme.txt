@@ -75,9 +75,7 @@ Once the plugin is activated, you can use it as follows:
 configuration for bulk discounts. Make sure "Bulk Discount enabled" is checked and optionally
 fill information about discounts which will be visible on the cart page. You can include HTML
 markup in the text - you can, for instance, include a link to your page with your discount
-policy. In case you need the plugin to work well with product variations, make sure that the
-"Treat product variations separately" option is unchecked. Since version 2.0 you
-may choose to use a flat discount applied to the cart item subtotal. Optionally you may also
+policy. Since version 2.0 you may choose to use a flat discount applied to the cart item subtotal. Optionally you may also
 modify the CSS styles for the old value and the new value which is displayed in the cart.
 Save the settings.
 
@@ -136,7 +134,6 @@ If the customer orders, say, 15 items of the product which costs $10 per item, t
 line will apply and the customer will pay (15 * 10) - 10 dollars. If the customers orders
 50 items, the second discount line will apply and the final price will be (50 * 10) - 20 dollars.
 
-
 = Can you provide an example of setting a fixed bulk discount? =
 Example for fixed discount follows:
 
@@ -148,6 +145,14 @@ line will apply and the customer will pay (15 * 10) - (15 * 2) = 15 * (10 - 2) d
 50 items, the second discount line will apply and the final price will be (50 * 10) - (50 * 3) =  50 * (10 - 3) dollars.
 **Note the difference between fixed and flat discount types!!! Flat discount is a discount from the line subtotal while fixed discount is applied on each individual quantity.**
 
+= What does mean the "Treat the variations separately" checkbox? =
+To illustrate what the setting means, let's have two variations: A and B of some product. Both have this bulk discount setting:
+quantity = 10, discount = 10%
+quantity = 20, discount = 50%.
+If we have "Treat variations separately" checked, then when we order 10 times variation A and 10 times variation B, then 10% bulk discount will be applied on both cart lines.
+If we have "Treat variations separately" unchecked, then when we order 10 times variation A and 10 times variation B, it will count the discount to 10 + 10 items,
+i.e. 20 items together and now the discount 50% will apply to both cart lines.
+Therefore in the first case we treated the variations separately in the computation of the discount and in the second case we treat them as shared.
 
 = How do I set the discount globally for all products? =
 This feature has been added to version 2.4.0 of WooCommerce Bulk Discount. If you want to set the discount policy globally for all products,
