@@ -125,10 +125,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 *
 		 * @param $product_id
 		 * @param $quantity
-		 * @param $order
+		 * @param $cart_item
+		 * @param $cart
 		 * @return float
 		 */
-		protected function get_discounted_coeff( $product_id, $quantity ) {
+		protected function get_discounted_coeff( $product_id, $quantity, $cart_item, $cart ) {
 
 			$q = array( 0.0 );
 			$d = array( 0.0 );
@@ -142,6 +143,8 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 			if ($product instanceof WC_Product_Variation) {
 				$product_id = $product->get_parent_id();
 			}
+
+			$cart_item_quantity = apply_filters( 'woocommerce_bulk_discount_quantity_cart_item', $quantity, $product_id, $cart_item, $cart );
 			
 			/* Find the appropriate discount coefficient by looping through up to the five discount settings */
 			for ( $i = 1; $i <= 5; $i++ ) {
@@ -153,7 +156,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				} else {
 					array_push( $d, get_post_meta( $product_id, "_bulkdiscount_discount_$i", true ) ? get_post_meta( $product_id, "_bulkdiscount_discount_$i", true ) : 0.0 );
 				}
-				if ( $quantity >= $q[$i] && $q[$i] > $q[0] ) {
+				if ( $cart_item_quantity >= $q[$i] && $q[$i] > $q[0] ) {
 					$q[0] = $q[$i];
 					$d[0] = $d[$i];
 				}
@@ -296,7 +299,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 					} else {
 						$quantity = $values['quantity'];
 					}
-					$this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] = $this->get_discounted_coeff( $this->get_product_id($_product), $quantity );
+					$this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] = $this->get_discounted_coeff( $this->get_product_id($_product), $quantity, $values, $cart );
 					$this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] = $_product->get_price();
 					$this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] = $quantity;
 				}
