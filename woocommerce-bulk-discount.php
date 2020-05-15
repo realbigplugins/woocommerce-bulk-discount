@@ -75,8 +75,8 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 			add_action( 'woocommerce_calculate_totals', array( $this, 'action_after_calculate' ), 10, 1 );
 			add_action( 'woocommerce_before_cart_table', array( $this, 'before_cart_table' ) );
 			add_action( 'woocommerce_single_product_summary', array( $this, 'single_product_summary' ), 45 );
-			add_filter( 'woocommerce_cart_item_subtotal', array( $this, 'filter_subtotal_price' ), 10, 2 );
-			add_filter( 'woocommerce_checkout_item_subtotal', array( $this, 'filter_subtotal_price' ), 10, 2 );
+			add_filter( 'woocommerce_cart_item_subtotal', array( $this, 'filter_subtotal_price' ), 10, 3 );
+			add_filter( 'woocommerce_checkout_item_subtotal', array( $this, 'filter_subtotal_price' ), 10, 3 );
 			add_filter( 'woocommerce_order_formatted_line_subtotal', array( $this, 'filter_subtotal_order_price' ), 10, 3 );
 			add_filter( 'woocommerce_product_write_panel_tabs', array( $this, 'action_product_write_panel_tabs' ) );
 			if ( version_compare( WOOCOMMERCE_VERSION, "2.7.0" ) >= 0 ) {
@@ -85,14 +85,15 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				add_filter( 'woocommerce_product_write_panels', array( $this, 'action_product_write_panels' ) );
 			}
 			add_action( 'woocommerce_process_product_meta', array( $this, 'action_process_meta' ) );
-			add_filter( 'woocommerce_cart_product_subtotal', array( $this, 'filter_cart_product_subtotal' ), 10, 3 );
+			add_filter( 'woocommerce_cart_item_subtotal', array( $this, 'filter_cart_product_subtotal' ), 9, 3 );
+			add_filter( 'woocommerce_checkout_item_subtotal', array( $this, 'filter_cart_product_subtotal' ), 9, 3 );
 			add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'order_update_meta' ) );
 
 			if ( version_compare( WOOCOMMERCE_VERSION, "2.1.0" ) >= 0 ) {
-				add_filter( 'woocommerce_cart_item_price', array( $this, 'filter_item_price' ), 10, 2 );
+				add_filter( 'woocommerce_cart_item_price', array( $this, 'filter_item_price' ), 10, 3 );
 				add_filter( 'woocommerce_update_cart_validation', array( $this, 'filter_before_calculate' ), 10, 1 );
 			} else {
-				add_filter( 'woocommerce_cart_item_price_html', array( $this, 'filter_item_price' ), 10, 2 );
+				add_filter( 'woocommerce_cart_item_price_html', array( $this, 'filter_item_price' ), 10, 3 );
 			}
 
 		}
@@ -175,9 +176,10 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 *
 		 * @param $price
 		 * @param $values
+		 * @param $cart_item_index
 		 * @return string
 		 */
-		public function filter_item_price( $price, $values ) {
+		public function filter_item_price( $price, $values, $cart_item_index ) {
 
 			if ( !$values || @!$values['data'] ) {
 				return $price;
@@ -195,12 +197,12 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 			if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
 				return $price; // for flat discount this filter has no meaning
 			}
-			if ( empty( $this->discount_coeffs ) || !isset( $this->discount_coeffs[$this->get_actual_id( $_product )] )
-				|| !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] ) || !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] )
+			if ( empty( $this->discount_coeffs ) || !isset( $this->discount_coeffs[$cart_item_index] )
+				|| !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] ) || !isset( $this->discount_coeffs[$cart_item_index]['coeff'] )
 			) {
 				$this->gather_discount_coeffs();
 			}
-			$coeff = $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
+			$coeff = $this->discount_coeffs[$cart_item_index]['coeff'];
 			if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' && $coeff == 0 ) || ( get_option( 'woocommerce_t4m_discount_type', '' ) == '' && $coeff == 1.0 ) ) {
 				return $price; // no price modification
 			}
@@ -209,7 +211,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
 					$discprice = $this->get_price( $_product->get_price() - $coeff );
 				} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-					$discprice = $this->get_price( $_product->get_price() - $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] );
+					$discprice = $this->get_price( $_product->get_price() - $coeff / $this->discount_coeffs[$cart_item_index]['quantity'] );
 				} else {
 					$discprice = $this->get_price( $_product->get_price() * $coeff );
 				}
@@ -217,11 +219,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				$discprice = $this->get_price( $_product->get_price() );
 			}
 
-			$oldprice = $this->get_price( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] );
+			$oldprice = $this->get_price( $this->discount_coeffs[$cart_item_index]['orig_price'] );
 			$old_css = esc_attr( get_option( 'woocommerce_t4m_css_old_price', 'color: #777; text-decoration: line-through; margin-right: 4px;' ) );
 			$new_css = esc_attr( get_option( 'woocommerce_t4m_css_new_price', 'color: #4AB915; font-weight: bold;' ) );
 			if ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) {
-				return "<span class='discount-info' title='" . sprintf( __( '%s bulk discount applied!', 'wc_bulk_discount' ), $this->get_price( $coeff / $this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] ) ) . "'>" .
+				return "<span class='discount-info' title='" . sprintf( __( '%s bulk discount applied!', 'wc_bulk_discount' ), $this->get_price( $coeff / $this->discount_coeffs[$cart_item_index]['quantity'] ) ) . "'>" .
 				"<span class='old-price' style='$old_css'>$oldprice</span>" .
 				"<span class='new-price' style='$new_css'>$discprice</span></span>";
 
@@ -238,9 +240,10 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 *
 		 * @param $price
 		 * @param $values
+		 * @cart_item_index
 		 * @return string
 		 */
-		public function filter_subtotal_price( $price, $values ) {
+		public function filter_subtotal_price( $price, $values, $cart_item_index ) {
 
 			if ( !$values || !$values['data'] ) {
 				return $price;
@@ -255,12 +258,12 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 			if ( ( get_option( 'woocommerce_t4m_show_on_subtotal', 'yes' ) == 'no' ) ) {
 				return $price;
 			}
-			if ( empty( $this->discount_coeffs ) || !isset( $this->discount_coeffs[$this->get_actual_id( $_product )] )
-				|| !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] ) || !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] )
+			if ( empty( $this->discount_coeffs ) || !isset( $this->discount_coeffs[$cart_item_index] )
+				|| !isset( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] ) || !isset( $this->discount_coeffs[$cart_item_index]['coeff'] )
 			) {
 				$this->gather_discount_coeffs();
 			}
-			$coeff = $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
+			$coeff = $this->discount_coeffs[$cart_item_index]['coeff'];
 			if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' && $coeff == 0 ) || ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' && $coeff == 0 ) || ( get_option( 'woocommerce_t4m_discount_type', '' ) == '' && $coeff == 1.0 ) ) {
 				return $price; // no price modification
 			}
@@ -293,15 +296,15 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 							$p = $valuesInner['data'];
 							if ( $p instanceof WC_Product_Variation && $this->get_parent($p) && $this->get_product_id($this->get_parent($p)) == $this->get_product_id($parent) ) {
 								$quantity += $valuesInner['quantity'];
-								$this->discount_coeffs[$this->get_variation_id($_product)]['quantity'] = $quantity;
+								$this->discount_coeffs[$cart_item_key]['quantity'] = $quantity;
 							}
 						}
 					} else {
 						$quantity = $values['quantity'];
 					}
-					$this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] = $this->get_discounted_coeff( $this->get_product_id($_product), $quantity, $values, $cart );
-					$this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] = $_product->get_price();
-					$this->discount_coeffs[$this->get_actual_id( $_product )]['quantity'] = $quantity;
+					$this->discount_coeffs[$cart_item_key]['coeff'] = $this->get_discounted_coeff( $this->get_product_id($_product), $quantity, $values, $cart );
+					$this->discount_coeffs[$cart_item_key]['orig_price'] = $_product->get_price();
+					$this->discount_coeffs[$cart_item_key]['quantity'] = $quantity;
 				}
 			}
 
@@ -312,6 +315,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 *
 		 * @param $price
 		 * @param $values
+		 * @param $order
 		 * @return string
 		 */
 		public function filter_subtotal_order_price( $price, $values, $order ) {
@@ -399,11 +403,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 						continue;
 					}
 					if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
-						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] / $values['quantity'] ) );
+						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$cart_item_key]['coeff'] / $values['quantity'] ) );
 					} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] / $values['quantity'] ) );
+						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$cart_item_key]['coeff'] / $values['quantity'] ) );
 					} else {
-						$row_base_price = $_product->get_price() * $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
+						$row_base_price = $_product->get_price() * $this->discount_coeffs[$cart_item_key]['coeff'];
 					}
 
 					$values['data']->set_price( $row_base_price );
@@ -439,11 +443,11 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 						continue;
 					}
 					if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
-						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] / $values['quantity'] ) );
+						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$cart_item_key]['coeff'] / $values['quantity'] ) );
 					} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'] / $values['quantity'] ) );
+						$row_base_price = max( 0, $_product->get_price() - ( $this->discount_coeffs[$cart_item_key]['coeff'] / $values['quantity'] ) );
 					} else {
-						$row_base_price = $_product->get_price() * $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
+						$row_base_price = $_product->get_price() * $this->discount_coeffs[$cart_item_key]['coeff'];
 					}
 
 					$values['data']->set_price( $row_base_price );
@@ -492,7 +496,7 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 					if ( get_post_meta( $this->get_product_id($_product), "_bulkdiscount_enabled", true ) != '' && get_post_meta( $this->get_product_id($_product), "_bulkdiscount_enabled", true ) !== 'yes' ) {
 						continue;
 					}
-					$values['data']->set_price( $this->discount_coeffs[$this->get_actual_id( $_product )]['orig_price'] );
+					$values['data']->set_price( $this->discount_coeffs[$cart_item_key]['orig_price'] );
 				}
 				$this->bulk_discount_calculated = false;
 			}
@@ -516,14 +520,15 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 		 * Hook to woocommerce_cart_product_subtotal filter.
 		 *
 		 * @param $subtotal
-		 * @param $_product
-		 * @param $quantity
-		 * @param WC_Cart $cart
+		 * @param $cart_item
+		 * @param $cart_item_index
 		 * @return string
 		 */
-		public function filter_cart_product_subtotal( $subtotal, $_product, $quantity ) {
+		public function filter_cart_product_subtotal( $subtotal, $cart_item, $cart_item_index ) {
 
-			if ( !$_product || !$quantity ) {
+			$_product = $this->get_product( $cart_item['product_id'] );
+
+			if ( !$_product || !$cart_item['quantity'] ) {
 				return $subtotal;
 			}
 			if ( $this->coupon_check() ) {
@@ -533,13 +538,13 @@ if ( !class_exists( 'Woo_Bulk_Discount_Plugin_t4m' ) ) {
 				return $subtotal;
 			}
 
-			$coeff = $this->discount_coeffs[$this->get_actual_id( $_product )]['coeff'];
+			$coeff = $this->discount_coeffs[$cart_item_index]['coeff'];
 			if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'flat' ) ) {
-				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
+				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $cart_item['quantity'] ) - $coeff ) );
 			} else if ( ( get_option( 'woocommerce_t4m_discount_type', '' ) == 'fixed' ) ) {
-				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $quantity ) - $coeff ) );
+				$newsubtotal = $this->get_price( max( 0, ( $_product->get_price() * $cart_item['quantity'] ) - $coeff ) );
 			} else {
-				$newsubtotal = $this->get_price( $_product->get_price() * $quantity * $coeff );
+				$newsubtotal = $this->get_price( $_product->get_price() * $cart_item['quantity'] * $coeff );
 			}
 
 			return $newsubtotal;
